@@ -3,12 +3,11 @@
 # Сохранить их как [‘A’, ‘2’] и [‘C’, ‘4’, ‘F’] соответственно.
 # Сумма чисел из примера: [‘C’, ‘F’, ‘1’]. Произведение - [‘7’, ‘C’, ‘9’, ‘F’, ‘E’].
 
-from collections import defaultdict
 from collections import deque
 
 # заполняем таблицу соответствия 16-ричных символов десятичным числам
 hexatable = '0123456789ABCDEF'
-table_hex = defaultdict(int)
+table_hex = {}
 for i,key in enumerate(hexatable):
     table_hex[key] = i
 
@@ -40,4 +39,4 @@ dex2 = hex_to_dex(hex_s_2)
 
 print('-' * 25)
 print(f'Сумма 16-ричных чисел: {list(hex_s_1)} + {list(hex_s_2)} = {dex_to_hex_s(dex1 + dex2)}')
-print(f'Произведение 16-ричнеых чисел: {list(hex_s_1)} * {list(hex_s_2)} = {dex_to_hex_s(dex1 * dex2)}')
+print(f'Произведение 16-ричных чисел: {list(hex_s_1)} * {list(hex_s_2)} = {dex_to_hex_s(dex1 * dex2)}')
