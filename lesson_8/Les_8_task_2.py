@@ -1,21 +1,19 @@
-"""
-2. Доработать алгоритм Дейкстры (рассматривался на уроке), чтобы он
-дополнительно возвращал список вершин, которые необходимо обойти.
-"""
+#2. Доработать алгоритм Дейкстры (рассматривался на уроке),
+# чтобы он дополнительно возвращал список вершин,
+# которые необходимо обойти.
 
 from collections import deque
 
 
 g = [
-  #  0  1  2  3  4  4  6  7
-    [0, 0, 1, 1, 9, 0, 0, 0,],  # 0
-    [0, 0, 9, 4, 0, 0, 5, 0,],  # 1
-    [0, 9, 0, 0, 3, 0, 6, 0,],  # 2
-    [0, 0, 0, 0, 0, 0, 0, 0,],  # 3
-    [0, 0, 0, 0, 0, 0, 1, 0,],  # 4
-    [0, 0, 0, 0, 0, 0, 5, 0,],  # 5
-    [0, 0, 7, 0, 8, 1, 0, 0,],  # 6
-    [0, 0, 0, 0, 0, 1, 2, 0,],  # 7
+    [0, 0, 1, 1, 9, 0, 0, 0],
+    [0, 0, 9, 4, 0, 0, 5, 0],
+    [0, 9, 0, 0, 3, 0, 6, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 5, 0],
+    [0, 0, 7, 0, 8, 1, 0, 0],
+    [0, 0, 0, 0, 0, 1, 2, 0],
 ]
 
 
@@ -24,7 +22,7 @@ def dijkstra(graph, start):
     is_visited = [False] * length
     cost = [float('inf')] * length
     parent = [-1] * length
-
+    begin = start
     cost[start] = 0
     min_cost = 0
 
@@ -33,9 +31,9 @@ def dijkstra(graph, start):
 
         for i, vertex in enumerate(graph[start]):
             if vertex != 0 and not is_visited[i]:
-                new_cost = vertex + cost[start]
-                if cost[i] > new_cost:
-                    cost[i] = new_cost
+
+                if cost[i] > vertex + cost[start]:
+                    cost[i] = vertex + cost[start]
                     parent[i] = start
 
         min_cost = float('inf')
@@ -44,20 +42,26 @@ def dijkstra(graph, start):
                 min_cost = cost[i]
                 start = i
 
-    track = {}
+    edge = {}
     for i, vertex in enumerate(parent):
         if vertex > -1:
-            track[i] = deque([vertex, i])
+            edge[i] = deque([vertex, i])
 
             while vertex > -1:
                 vertex = parent[vertex]
-                if vertex > -1:  # не хочу видеть мусор в виде ведущих -1
-                    track[i].appendleft(vertex)
+                if vertex > -1:
+                    edge[i].appendleft(vertex)
 
-            track[i] = list(track[i])
+            edge[i] = set(edge[i])
+        elif i == begin:
+            edge[i] = {0}
+        else:
+            edge[i] = {float('inf')}
 
-    return track
+    return edge
 
-
-s = int(input(f"Введите вершину начала обхода графа (0 - {len(g) - 1}): "))
-print(f'Выходя из вершины {s} мы попадаем в другие проходя путями:', dijkstra(g, s), sep="\n")
+print('*'*25, f'\n для графа:')
+print(*g, sep='\n')
+s = int(input('введите вершину старта: \n'))
+print(f'вершины, которые нобходимо обойти:')
+print(dijkstra(g, s))

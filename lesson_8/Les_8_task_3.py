@@ -6,59 +6,67 @@ a. граф должен храниться в виде списка смежн�
 b. генерация графа выполняется в отдельной функции, которая принимает на вход число вершин.
 """
 
+import random
 from collections import deque
 
 
 def generate_graph(num):
-    new_graph = {}
+    graph = [list({random.randint(0, n) for j in range(random.randint(1, n)) if j != i}) for i in range(n)]
+#    graph = [
+#        [1, 3, 4],  # 0
+#        [2, 5],     # 1
+#        [1, 6],     # 2
+#        [1, 5, 7],  # 3
+#        [2, 6],     # 4
+#        [6],        # 5
+#        [5],        # 6
+#        [6],        # 7
+#    ]
+    return graph
 
-    for i in range(num):
-        new_graph[i] = tuple(j for j in range(num) if j != i)
 
-    return new_graph
+def deep_walk(graph, start, finish, g_path, cost, best_cost):
 
-
-def walk_graph(graph, start, finish):
-    length = len(graph)
-    parent = [None] * length
-    is_visited = [False] * length
-
-    deq = deque([start])
-    is_visited[start] = True
-
-    while len(deq) > 0:
-        current = deq.pop()
-
-        if current == finish:
-            break
-
-        for vertex in graph[current]:
-            if not is_visited[vertex]:
-                is_visited[vertex] = True
-                parent[vertex] = current
-                deq.appendleft(vertex)
-    else:
-        return f"Из вершины {start} невозможно попасть в вершину {finish}"
-
-    cost = 0
-    way = deque([finish])
-    i = finish
-
-    while parent[i] != start:
-        cost += 1
-        way.appendleft(parent[i])
-        i = parent[i]
-
+    g_path.append(start)
     cost += 1
-    way.appendleft(start)
+    for i, vertex in enumerate(graph[start]):
+        if vertex == finish:
+            g_path.append(vertex)
+            path_i[cost] = deque(g_path)
+            path_i[cost] = list(path_i[cost])
+            cost = 0
 
-    return list(way)
+        elif not is_visited[start][i]:
+            start = vertex
+            is_visited[start][i] = True
+            deep_walk(graph, start, finish, g_path, cost, best_cost)
+
+        return
+    return path_i
 
 
-n = int(input("Количество вершин в графе: "))
+n = int(input('Введите количество вершин в графе: \n'))
+g = generate_graph(n)
+print(*g, sep='\n')
+is_visited = [[False for _ in range(len(g[j]))] for j in range(len(g))]
+
+g_path = []
+path_i = {n+1: 'нет решения'}
+best_cost = 0
+cost = 0
+cost_i = 0
 s = int(input("Введите вершину начала: "))
 f = int(input("Введите вершину конца: "))
 
-g = generate_graph(30)
-
-print(walk_graph(g, s, f))
+deep_walk(g, s, f, g_path, cost, best_cost)
+print('*'*50)
+print(f'Варианты пути из вершины "{s}" в вершину "{f}":')
+k = 0
+for i, path in enumerate(path_i):
+    if i == 0 :
+        k = 1
+    else:
+        print(f' Вариант пути №{k}, длина пути = {path}: {path_i[path]}')
+        k = 0
+if k == 1:
+    print(path_i[n+1])
